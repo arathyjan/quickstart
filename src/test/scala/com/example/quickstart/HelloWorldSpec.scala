@@ -22,7 +22,7 @@ object HelloWorldSpec extends SimpleIOSuite {
 
   private[this] val retHelloWorld: IO[Response[IO]] = {
     val getHW = Request[IO](Method.GET, uri"/hello/world")
-    val helloWorld = HelloWorld.impl[IO]
+    val helloWorld = HelloWorld.impl
     QuickstartRoutes.helloWorldRoutes(helloWorld).orNotFound(getHW)
   }
 }

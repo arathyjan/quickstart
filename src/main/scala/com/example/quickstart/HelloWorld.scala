@@ -1,13 +1,12 @@
 package com.example.quickstart
 
-import cats.Applicative
-import cats.implicits._
+import cats.effect.IO
 import io.circe.{Encoder, Json}
 import org.http4s.EntityEncoder
 import org.http4s.circe._
 
-trait HelloWorld[F[_]]{
-  def hello(n: HelloWorld.Name): F[HelloWorld.Greeting]
+trait HelloWorld {
+  def hello(n: HelloWorld.Name): IO[HelloWorld.Greeting]
 }
 
 object HelloWorld {
@@ -26,12 +25,9 @@ object HelloWorld {
         ("message", Json.fromString(a.greeting)),
       )
     }
-    implicit def greetingEntityEncoder[F[_]: Applicative]: EntityEncoder[F, Greeting] =
-      jsonEncoderOf[F, Greeting]
+    implicit def greetingEntityEncoder : EntityEncoder[IO, Greeting] =
+      jsonEncoderOf[IO, Greeting]
   }
 
-  def impl[F[_]: Applicative]: HelloWorld[F] = new HelloWorld[F]{
-    def hello(n: HelloWorld.Name): F[HelloWorld.Greeting] =
-        Greeting("Hello, " + n.name).pure[F]
-  }
+  def impl : HelloWorld = (n: HelloWorld.Name) => IO.pure(Greeting("Hello, " + n.name))
 }

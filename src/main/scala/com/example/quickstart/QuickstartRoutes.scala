@@ -1,16 +1,15 @@
 package com.example.quickstart
 
-import cats.effect.Sync
-import cats.implicits._
+import cats.effect.IO
 import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 
 object QuickstartRoutes {
 
-  def jokeRoutes[F[_]: Sync](J: Jokes[F]): HttpRoutes[F] = {
-    val dsl = new Http4sDsl[F]{}
+  def jokeRoutes(J: Jokes): HttpRoutes[IO] = {
+    val dsl = new Http4sDsl[IO]{}
     import dsl._
-    HttpRoutes.of[F] {
+    HttpRoutes.of[IO] {
       case GET -> Root / "joke" =>
         for {
           joke <- J.get
@@ -19,10 +18,10 @@ object QuickstartRoutes {
     }
   }
 
-  def helloWorldRoutes[F[_]: Sync](H: HelloWorld[F]): HttpRoutes[F] = {
-    val dsl = new Http4sDsl[F]{}
+  def helloWorldRoutes(H: HelloWorld): HttpRoutes[IO] = {
+    val dsl = new Http4sDsl[IO]{}
     import dsl._
-    HttpRoutes.of[F] {
+    HttpRoutes.of[IO] {
       case GET -> Root / "hello" / name =>
         for {
           greeting <- H.hello(HelloWorld.Name(name))
